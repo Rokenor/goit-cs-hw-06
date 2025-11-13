@@ -1,0 +1,30 @@
+services:
+  # Сервіс Python-додатку (HTTP + Socket)
+  app:
+    build: .  # Збираємо образ з Dockerfile в поточній директорії
+    ports:
+      - "3000:3000"      # Прокидуємо HTTP порт
+      - "5000:5000/udp"  # Прокидуємо UDP Socket порт
+    depends_on:
+      - mongo          # Додаток залежить від MongoDB
+    networks:
+      - webnet
+
+  # Сервіс MongoDB
+  mongo:
+    image: mongo:latest  # Використовуємо останній образ Mongo
+    ports:
+      - "27017:27017" # # Прокидуємо порт
+    volumes:
+      - mongo-data:/data/db  # Зберігаємо дані в volume
+    networks:
+      - webnet
+
+# Мережа для взаємодії контейнерів
+networks:
+  webnet:
+    driver: bridge
+
+# Docker Volume для збереження даних MongoDB
+volumes:
+  mongo-data:
